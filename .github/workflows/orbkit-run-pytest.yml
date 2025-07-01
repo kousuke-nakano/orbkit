@@ -1,0 +1,56 @@
+# This workflow will build and test orbkit.
+
+name: orbkit build and test
+
+on:
+  push:
+    branches: [ "main", "devel" ]
+    paths-ignore:
+      - 'doc/**'
+      - 'examples/**'
+      - 'README.md'
+  pull_request:
+    branches: [ "main", "devel" ]
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+
+    steps:
+    - name: Install gfortran and gcc
+      run: |
+        sudo apt-get update
+        sudo apt-get install gfortran
+
+    - name: Install OpenBLAS and LAPACK
+      run: sudo apt-get install libopenblas-dev liblapack-dev
+
+    - uses: actions/checkout@v3
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install orbkit
+      run: |
+        python -m pip install flake8 pytest
+        python -m pip install .
+
+    #- name: Lint jqmc with flake8
+    #  run: |
+    #    # stop the build if there are Python syntax errors or undefined names
+    #    flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+    #    # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+    #    flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+    - name: Test orbkit (pytest) with @jit decorator (intra-software comparisons)
+      run: |
+        pytest -s -v tests/test_trexio.py
+        pytest -s -v tests/test_AOs.py
+        pytest -s -v tests/test_MOs.py
+        pytest -s -v tests/test_ecps.py
