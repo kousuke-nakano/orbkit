@@ -48,10 +48,10 @@ from ..orbkit.coulomb_potential import (
     compute_discretized_bare_coulomb_potential_el_ion_element_wise_jax,
     compute_ecp_local_parts_all_pairs_debug,
     compute_ecp_local_parts_all_pairs_jax,
-    #compute_ecp_non_local_parts_all_pairs_debug,
-    #compute_ecp_non_local_parts_all_pairs_jax,
-    #compute_ecp_non_local_parts_nearest_neighbors_debug,
-    #compute_ecp_non_local_parts_nearest_neighbors_jax,
+    compute_ecp_non_local_parts_all_pairs_debug,
+    compute_ecp_non_local_parts_all_pairs_jax,
+    compute_ecp_non_local_parts_nearest_neighbors_debug,
+    compute_ecp_non_local_parts_nearest_neighbors_jax,
 )
 from ..orbkit.trexio_wrapper import read_trexio_file
 
@@ -185,7 +185,6 @@ def test_debug_and_jax_ecp_local():
 
     np.testing.assert_almost_equal(vpot_ecp_local_full_NN_jax, vpot_ecp_local_full_NN_debug, decimal=10)
 
-'''
 @pytest.mark.parametrize("Nv", Nv_params)
 @pytest.mark.parametrize("alpha, beta, gamma", angle_params)
 def test_debug_and_jax_ecp_non_local_full_NN(Nv, alpha, beta, gamma):
@@ -195,7 +194,6 @@ def test_debug_and_jax_ecp_non_local_full_NN(Nv, alpha, beta, gamma):
         _,
         _,
         _,
-        geminal_mo_data,
         coulomb_potential_data,
     ) = read_trexio_file(
         trexio_file=os.path.join(os.path.dirname(__file__), "trexio_example_files", "water_ccecp_ccpvqz.h5"), store_tuple=True
@@ -206,15 +204,6 @@ def test_debug_and_jax_ecp_non_local_full_NN(Nv, alpha, beta, gamma):
 
     # n_atom
     n_atom = structure_data.natom
-
-    # define data
-    jastrow_data = Jastrow_data(
-        jastrow_one_body_data=None,
-        jastrow_two_body_data=None,
-        jastrow_three_body_data=None,
-    )  # no jastrow for the time-being.
-
-    wavefunction_data = Wavefunction_data(geminal_data=geminal_mo_data, jastrow_data=jastrow_data)
 
     r_up_carts_np = np.array(
         [
@@ -254,10 +243,8 @@ def test_debug_and_jax_ecp_non_local_full_NN(Nv, alpha, beta, gamma):
         mesh_non_local_ecp_part_r_up_carts_full_NN_jax,
         mesh_non_local_ecp_part_r_dn_carts_full_NN_jax,
         V_nonlocal_full_NN_jax,
-        sum_V_nonlocal_full_NN_jax,
     ) = compute_ecp_non_local_parts_all_pairs_jax(
         coulomb_potential_data=coulomb_potential_data,
-        wavefunction_data=wavefunction_data,
         r_up_carts=r_up_carts_jnp,
         r_dn_carts=r_dn_carts_jnp,
         Nv=Nv,
@@ -268,17 +255,13 @@ def test_debug_and_jax_ecp_non_local_full_NN(Nv, alpha, beta, gamma):
         mesh_non_local_ecp_part_r_up_carts_full_NN_debug,
         mesh_non_local_ecp_part_r_dn_carts_full_NN_debug,
         V_nonlocal_full_NN_debug,
-        sum_V_nonlocal_full_NN_debug,
     ) = compute_ecp_non_local_parts_all_pairs_debug(
         coulomb_potential_data=coulomb_potential_data,
-        wavefunction_data=wavefunction_data,
         r_up_carts=r_up_carts_np,
         r_dn_carts=r_dn_carts_np,
         Nv=Nv,
         RT=R_np.T,
     )
-
-    np.testing.assert_almost_equal(sum_V_nonlocal_full_NN_debug, sum_V_nonlocal_full_NN_jax, decimal=6)
 
     mesh_non_local_r_up_carts_max_full_NN_jax = mesh_non_local_ecp_part_r_up_carts_full_NN_jax[
         np.argmax(V_nonlocal_full_NN_jax)
@@ -308,10 +291,8 @@ def test_debug_and_jax_ecp_non_local_full_NN(Nv, alpha, beta, gamma):
         mesh_non_local_ecp_part_r_up_carts_NN_check_jax,
         mesh_non_local_ecp_part_r_dn_carts_NN_check_jax,
         V_nonlocal_NN_check_jax,
-        sum_V_nonlocal_NN_check_jax,
     ) = compute_ecp_non_local_parts_nearest_neighbors_jax(
         coulomb_potential_data=coulomb_potential_data,
-        wavefunction_data=wavefunction_data,
         NN=n_atom,
         Nv=Nv,
         RT=R_jnp.T,
@@ -323,10 +304,8 @@ def test_debug_and_jax_ecp_non_local_full_NN(Nv, alpha, beta, gamma):
         mesh_non_local_ecp_part_r_up_carts_NN_check_debug,
         mesh_non_local_ecp_part_r_dn_carts_NN_check_debug,
         V_nonlocal_NN_check_debug,
-        sum_V_nonlocal_NN_check_debug,
     ) = compute_ecp_non_local_parts_nearest_neighbors_debug(
         coulomb_potential_data=coulomb_potential_data,
-        wavefunction_data=wavefunction_data,
         NN=n_atom,
         Nv=Nv,
         RT=R_np.T,
@@ -334,11 +313,6 @@ def test_debug_and_jax_ecp_non_local_full_NN(Nv, alpha, beta, gamma):
         r_dn_carts=r_dn_carts_np,
     )
 
-    # debug, full-NN vs check-NN
-    np.testing.assert_almost_equal(sum_V_nonlocal_full_NN_debug, sum_V_nonlocal_NN_check_debug, decimal=6)
-
-    # jax, full-NN vs check-NN
-    np.testing.assert_almost_equal(sum_V_nonlocal_full_NN_jax, sum_V_nonlocal_NN_check_jax, decimal=6)
 
     mesh_non_local_r_up_carts_max_NN_check_jax = mesh_non_local_ecp_part_r_up_carts_NN_check_jax[
         np.argmax(V_nonlocal_NN_check_jax)
@@ -383,7 +357,6 @@ def test_debug_and_jax_ecp_non_local_partial_NN(Nv, alpha, beta, gamma):
         _,
         _,
         _,
-        geminal_mo_data,
         coulomb_potential_data,
     ) = read_trexio_file(
         trexio_file=os.path.join(os.path.dirname(__file__), "trexio_example_files", "water_ccecp_ccpvqz.h5"), store_tuple=True
@@ -394,15 +367,6 @@ def test_debug_and_jax_ecp_non_local_partial_NN(Nv, alpha, beta, gamma):
 
     # n_atom
     n_atom = structure_data.natom
-
-    # define data
-    jastrow_data = Jastrow_data(
-        jastrow_one_body_data=None,
-        jastrow_two_body_data=None,
-        jastrow_three_body_data=None,
-    )  # no jastrow for the time-being.
-
-    wavefunction_data = Wavefunction_data(geminal_data=geminal_mo_data, jastrow_data=jastrow_data)
 
     r_up_carts_np = np.array(
         [
@@ -442,11 +406,9 @@ def test_debug_and_jax_ecp_non_local_partial_NN(Nv, alpha, beta, gamma):
         (
             mesh_non_local_ecp_part_r_up_carts_NN_jax,
             mesh_non_local_ecp_part_r_dn_carts_NN_jax,
-            V_nonlocal_NN_jax,
-            sum_V_nonlocal_NN_jax,
+            V_nonlocal_NN_jax
         ) = compute_ecp_non_local_parts_nearest_neighbors_jax(
             coulomb_potential_data=coulomb_potential_data,
-            wavefunction_data=wavefunction_data,
             r_up_carts=r_up_carts_jnp,
             r_dn_carts=r_dn_carts_jnp,
             Nv=Nv,
@@ -458,18 +420,14 @@ def test_debug_and_jax_ecp_non_local_partial_NN(Nv, alpha, beta, gamma):
             mesh_non_local_ecp_part_r_up_carts_NN_debug,
             mesh_non_local_ecp_part_r_dn_carts_NN_debug,
             V_nonlocal_NN_debug,
-            sum_V_nonlocal_NN_debug,
         ) = compute_ecp_non_local_parts_nearest_neighbors_debug(
             coulomb_potential_data=coulomb_potential_data,
-            wavefunction_data=wavefunction_data,
             r_up_carts=r_up_carts_np,
             r_dn_carts=r_dn_carts_np,
             Nv=Nv,
             NN=NN,
             RT=R_np.T,
         )
-
-        np.testing.assert_almost_equal(sum_V_nonlocal_NN_debug, sum_V_nonlocal_NN_jax, decimal=6)
 
         mesh_non_local_r_up_carts_max_NN_jax = mesh_non_local_ecp_part_r_up_carts_NN_jax[np.argmax(V_nonlocal_NN_jax)]
         mesh_non_local_r_up_carts_max_NN_debug = mesh_non_local_ecp_part_r_up_carts_NN_debug[np.argmax(V_nonlocal_NN_debug)]
@@ -485,7 +443,6 @@ def test_debug_and_jax_ecp_non_local_partial_NN(Nv, alpha, beta, gamma):
         np.testing.assert_array_almost_equal(
             mesh_non_local_r_dn_carts_max_NN_jax, mesh_non_local_r_dn_carts_max_NN_debug, decimal=6
         )
-'''
 
 def test_debug_and_jax_bare_el_ion_elements():
     """Test the bare couloumb potential computation."""
