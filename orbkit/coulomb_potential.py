@@ -468,10 +468,12 @@ class Coulomb_potential_data:
         append a dummy element with ang_mom = global_ang_mom_non_local_part.
 
         Returns updated lists of:
-            -ang_mom_non_local_part_padded_jnp,
-            -exponents_non_local_part_padded_jnp,
-            -coefficients_non_local_part_padded_jnp,
-            -powers_non_local_part_padded_jnp,
+
+            - ang_mom_non_local_part_padded_jnp,
+            - exponents_non_local_part_padded_jnp,
+            - coefficients_non_local_part_padded_jnp,
+            - powers_non_local_part_padded_jnp,
+
         so that each atom's maximum ang_mom matches the global max,
         and the same dim. for i_atom (nucleus index).
         """
@@ -1347,7 +1349,7 @@ def compute_ecp_non_local_parts_all_pairs_jax(
     grid_points = grid_points @ RT  # rotate the grid points. dim. (N,3) @ (3,3) = (N,3)
 
     # start = time.perf_counter()
-    r_up_carts_on_mesh, r_dn_carts_on_mesh, V_ecp_up, V_ecp_dn, sum_V_nonlocal = (
+    r_up_carts_on_mesh, r_dn_carts_on_mesh, V_ecp_up, V_ecp_dn = (
         compute_ecp_non_local_part_all_pairs_jax_weights_grid_points(
             coulomb_potential_data=coulomb_potential_data,
             r_up_carts=r_up_carts,
@@ -1613,9 +1615,7 @@ def compute_ecp_non_local_part_all_pairs_jax_weights_grid_points(
         power_np,
     )
 
-    sum_V_nonlocal = jnp.sum(V_ecp_up) + jnp.sum(V_ecp_dn)
-
-    return r_up_carts_on_mesh, r_dn_carts_on_mesh, V_ecp_up, V_ecp_dn, sum_V_nonlocal
+    return r_up_carts_on_mesh, r_dn_carts_on_mesh, V_ecp_up, V_ecp_dn
 
 
 def compute_bare_coulomb_potential_debug(
