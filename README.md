@@ -6,7 +6,7 @@
 ![release](https://img.shields.io/github/release/kousuke-nakano/orbkit/all.svg)
 ![fork](https://img.shields.io/github/forks/kousuke-nakano/orbkit?style=social)
 ![stars](https://img.shields.io/github/stars/kousuke-nakano/orbkit?style=social)
-![workflows](https://github.com/kousuke-nakano/orbkit/actions/workflows/jqmc-run-pytest.yml/badge.svg)
+![workflows](https://github.com/kousuke-nakano/orbkit/actions/workflows/orbkit-run-pytest.yml/badge.svg)
 
 ## How to install orbkit
 
