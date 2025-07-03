@@ -1,6 +1,6 @@
 # orbkit
 
-**orbkit** is a toolkit for continuous ab initio quantum Monte Carlo (QMC) simulations, developed entirely from scratch using `Python` and `JAX`. By leveraging `JAX` just-in-time (`jit`) compilation and vectorized mapping (`vmap`) functionalities, `orbkit` achieves high-performance computations **especially on GPUs** while remaining portable across CPUs, GPUs, and TPUs. See [here](http://jax.readthedocs.io/) for the details of `JAX`.
+**orbkit** is a **JAX-compatible** toolkit for continuous ab initio quantum Monte Carlo (QMC) simulations, developed entirely from scratch using `Python` and `JAX`. By leveraging `JAX` just-in-time (`jit`) compilation and vectorized mapping (`vmap`) functionalities, `orbkit` achieves high-performance computations **especially on GPUs** while remaining portable across CPUs, GPUs, and TPUs. See [here](http://jax.readthedocs.io/) for the details of `JAX`.
 
 ![license](https://img.shields.io/github/license/kousuke-nakano/orbkit)
 ![release](https://img.shields.io/github/release/kousuke-nakano/orbkit/all.svg)
