@@ -185,6 +185,7 @@ def test_debug_and_jax_ecp_local():
 
     np.testing.assert_almost_equal(vpot_ecp_local_full_NN_jax, vpot_ecp_local_full_NN_debug, decimal=10)
 
+
 @pytest.mark.parametrize("Nv", Nv_params)
 @pytest.mark.parametrize("alpha, beta, gamma", angle_params)
 def test_debug_and_jax_ecp_non_local_full_NN(Nv, alpha, beta, gamma):
@@ -313,7 +314,6 @@ def test_debug_and_jax_ecp_non_local_full_NN(Nv, alpha, beta, gamma):
         r_dn_carts=r_dn_carts_np,
     )
 
-
     mesh_non_local_r_up_carts_max_NN_check_jax = mesh_non_local_ecp_part_r_up_carts_NN_check_jax[
         np.argmax(V_nonlocal_NN_check_jax)
     ]
@@ -403,17 +403,15 @@ def test_debug_and_jax_ecp_non_local_partial_NN(Nv, alpha, beta, gamma):
 
     for NN in range(1, n_atom):
         # ecp non-local (NN, NN=NN)
-        (
-            mesh_non_local_ecp_part_r_up_carts_NN_jax,
-            mesh_non_local_ecp_part_r_dn_carts_NN_jax,
-            V_nonlocal_NN_jax
-        ) = compute_ecp_non_local_parts_nearest_neighbors_jax(
-            coulomb_potential_data=coulomb_potential_data,
-            r_up_carts=r_up_carts_jnp,
-            r_dn_carts=r_dn_carts_jnp,
-            Nv=Nv,
-            NN=NN,
-            RT=R_jnp.T,
+        (mesh_non_local_ecp_part_r_up_carts_NN_jax, mesh_non_local_ecp_part_r_dn_carts_NN_jax, V_nonlocal_NN_jax) = (
+            compute_ecp_non_local_parts_nearest_neighbors_jax(
+                coulomb_potential_data=coulomb_potential_data,
+                r_up_carts=r_up_carts_jnp,
+                r_dn_carts=r_dn_carts_jnp,
+                Nv=Nv,
+                NN=NN,
+                RT=R_jnp.T,
+            )
         )
 
         (
@@ -443,6 +441,7 @@ def test_debug_and_jax_ecp_non_local_partial_NN(Nv, alpha, beta, gamma):
         np.testing.assert_array_almost_equal(
             mesh_non_local_r_dn_carts_max_NN_jax, mesh_non_local_r_dn_carts_max_NN_debug, decimal=6
         )
+
 
 def test_debug_and_jax_bare_el_ion_elements():
     """Test the bare couloumb potential computation."""

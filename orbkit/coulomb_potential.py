@@ -65,7 +65,7 @@ from .structure import (
     get_min_dist_rel_R_cart_jnp,
     get_min_dist_rel_R_cart_np,
 )
-#from .wavefunction import Wavefunction_data
+# from .wavefunction import Wavefunction_data
 
 # set logger
 logger = getLogger("jqmc").getChild(__name__)
@@ -1113,7 +1113,7 @@ def compute_ecp_local_parts_all_pairs_jax(
     return V_ecp
 
 
-@partial(jit, static_argnums=(4,5))
+@partial(jit, static_argnums=(4, 5))
 def compute_ecp_non_local_parts_nearest_neighbors_jax(
     coulomb_potential_data: Coulomb_potential_data,
     r_up_carts: jnpt.ArrayLike,
@@ -1349,14 +1349,12 @@ def compute_ecp_non_local_parts_all_pairs_jax(
     grid_points = grid_points @ RT  # rotate the grid points. dim. (N,3) @ (3,3) = (N,3)
 
     # start = time.perf_counter()
-    r_up_carts_on_mesh, r_dn_carts_on_mesh, V_ecp_up, V_ecp_dn = (
-        compute_ecp_non_local_part_all_pairs_jax_weights_grid_points(
-            coulomb_potential_data=coulomb_potential_data,
-            r_up_carts=r_up_carts,
-            r_dn_carts=r_dn_carts,
-            weights=weights,
-            grid_points=grid_points,
-        )
+    r_up_carts_on_mesh, r_dn_carts_on_mesh, V_ecp_up, V_ecp_dn = compute_ecp_non_local_part_all_pairs_jax_weights_grid_points(
+        coulomb_potential_data=coulomb_potential_data,
+        r_up_carts=r_up_carts,
+        r_dn_carts=r_dn_carts,
+        weights=weights,
+        grid_points=grid_points,
     )
     # start = time.perf_counter()
     _, uq_indices = np.unique(coulomb_potential_data.nucleus_index_non_local_part, return_index=True)
@@ -1900,6 +1898,7 @@ def compute_bare_coulomb_potential_el_ion_jax(
     )
 
     return jnp.sum(interactions_el_ion_elements_up) + jnp.sum(interactions_el_ion_elements_dn)
+
 
 '''
 if __name__ == "__main__":

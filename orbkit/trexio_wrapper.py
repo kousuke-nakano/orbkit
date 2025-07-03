@@ -453,7 +453,9 @@ def read_trexio_file(
         mo_considered_indices_dn = [i for (i, v) in enumerate(mo_occ_dn) if v >= threshold_mo_occ]
 
         if len(mo_considered_indices_up) < len(mo_considered_indices_dn):
-            raise ValueError(f"The number of occ. orbitals for up spins = {len(mo_considered_indices_up)} should be larger than those of down spins = {len(mo_considered_indices_dn)}.")
+            raise ValueError(
+                f"The number of occ. orbitals for up spins = {len(mo_considered_indices_up)} should be larger than those of down spins = {len(mo_considered_indices_dn)}."
+            )
 
         mo_considered_num = len(mo_considered_indices_up)
         mo_considered_indices = mo_considered_indices_up[:mo_considered_num]
