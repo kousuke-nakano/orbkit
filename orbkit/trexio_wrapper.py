@@ -188,7 +188,7 @@ def read_trexio_file(
             atomic_numbers=tuple(convert_from_atomic_labels_to_atomic_numbers(labels_r)),
             element_symbols=tuple(labels_r),
             atomic_labels=tuple(labels_r),
-            positions=np.array(coords_r),
+            positions=tuple(tuple(a) for a in np.array(coords_r).tolist()),
         )
     else:
         structure_data = Structure_data(
